@@ -5,6 +5,7 @@ on:
     tags:
       - '*.*.*'
       - 'SNAPSHOT'
+  workflow_dispatch:
 
 jobs:
   build_and_release:
