@@ -41,13 +41,19 @@ jobs:
           repository: ${{ matrix.repository }}
           event-type: new_release
           client-payload: '{"version": "${{ github.ref }}"}'
-          
+
+  check_status:
+    needs: dispatch
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository: [burdeamit/gh-dispatch-md]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
       - name: Check workflow status
-        env:
-          TARGET_REPO: burdeamit/gh-dispatch-md
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          check_run_url="https://api.github.com/repos/$TARGET_REPO/actions/runs"
+          check_run_url="https://api.github.com/repos/${{ matrix.repository }}/actions/runs"
           conclusion=""
           until [[ "$conclusion" == "success" || "$conclusion" == "failure" ]]; do
             response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" $check_run_url)
