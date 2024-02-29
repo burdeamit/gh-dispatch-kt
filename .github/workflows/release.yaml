@@ -42,3 +42,22 @@ jobs:
           event-type: new_release
           client-payload: '{"version": "${{ github.ref }}"}'
           
+      - name: Check workflow status
+        env:
+          TARGET_REPO: burdeamit/gh-dispatch-md
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          check_run_url="https://api.github.com/repos/$TARGET_REPO/actions/runs"
+          conclusion=""
+          until [[ "$conclusion" == "success" || "$conclusion" == "failure" ]]; do
+            response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" $check_run_url)
+            conclusion=$(echo $response | jq -r '.workflow_runs[0].conclusion')
+            echo "Workflow status: $conclusion"
+            if [[ "$conclusion" == "null" ]]; then
+              echo "Workflow is still running. Waiting..."
+              sleep 60
+            elif [[ "$conclusion" == "failure" ]]; then
+              echo "Workflow failed."
+              exit 1
+            fi
+          done
