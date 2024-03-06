@@ -38,8 +38,7 @@ jobs:
         run: |
           GITHUB_REF=${{ github.ref }}
           echo "SPECMATIC_LATEST_RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          echo "Extracted Latest Specmatic Release Version"
-          echo "$SPECMATIC_LATEST_RELEASE_VERSION"
+          echo "Extracted Latest Specmatic Release Version ${SPECMATIC_LATEST_RELEASE_VERSION}"
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3
         with:
@@ -48,28 +47,28 @@ jobs:
           event-type: specmatic-core-release
           client-payload: '{"latest-release": "$SPECMATIC_LATEST_RELEASE_VERSION"}'
 
-  check_status:
-    needs: dispatch
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        repository: [burdeamit/gh-dispatch-md]
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - name: Check workflow status
-        run: |
-          check_run_url="https://api.github.com/repos/${{ matrix.repository }}/actions/runs"
-          conclusion=""
-          until [[ "$conclusion" == "success" || "$conclusion" == "failure" ]]; do
-            response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" $check_run_url)
-            conclusion=$(echo $response | jq -r '.workflow_runs[0].conclusion')
-            echo "Workflow status: $conclusion"
-            if [[ "$conclusion" == "null" ]]; then
-              echo "Workflow is still running. Waiting..."
-              sleep 60
-            elif [[ "$conclusion" == "failure" ]]; then
-              echo "Workflow failed."
-              exit 1
-            fi
-          done
+  # check_status:
+  #   needs: dispatch
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       repository: [burdeamit/gh-dispatch-md]
+  #   env:
+  #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #   steps:
+  #     - name: Check workflow status
+  #       run: |
+  #         check_run_url="https://api.github.com/repos/${{ matrix.repository }}/actions/runs"
+  #         conclusion=""
+  #         until [[ "$conclusion" == "success" || "$conclusion" == "failure" ]]; do
+  #           response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" $check_run_url)
+  #           conclusion=$(echo $response | jq -r '.workflow_runs[0].conclusion')
+  #           echo "Workflow status: $conclusion"
+  #           if [[ "$conclusion" == "null" ]]; then
+  #             echo "Workflow is still running. Waiting..."
+  #             sleep 60
+  #           elif [[ "$conclusion" == "failure" ]]; then
+  #             echo "Workflow failed."
+  #             exit 1
+  #           fi
+  #         done
