@@ -6,6 +6,9 @@ on:
       - '*.*.*'
       - 'SNAPSHOT'
 
+env: 
+  SPECMATIC_LATEST_RELEASE_VERSION: ${{ github.ref }}
+
 jobs:
   # build_and_release:
   #   runs-on: ubuntu-latest
