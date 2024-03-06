@@ -34,13 +34,19 @@ jobs:
         repository: [burdeamit/gh-dispatch-md]
     runs-on: ubuntu-latest
     steps:
+      - name: Extracting Latest Release Version From Github Ref
+        run: |
+          GITHUB_REF=${{ github.ref }}
+          echo "SPECMATIC_LATEST_RELEASE_VERSION=${ GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          echo "Extracted Latest Specmatic Release Version"
+          echo $SPECMATIC_LATEST_RELEASE_VERSION
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.UPDATE_TOKEN }}
           repository: ${{ matrix.repository }}
-          event-type: specmatic_core_release
-          client-payload: '{"version": "${{ github.ref }}"}'
+          event-type: specmatic-core-release
+          client-payload: '{"latest-release": "$SPECMATIC_LATEST_RELEASE_VERSION"}'
 
   check_status:
     needs: dispatch
