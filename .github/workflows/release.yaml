@@ -37,7 +37,7 @@ jobs:
       - name: Extracting Latest Release Version From Github Ref
         run: |
           GITHUB_REF=${{ github.ref }}
-          echo "SPECMATIC_LATEST_RELEASE_VERSION=${ GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          echo "SPECMATIC_LATEST_RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           echo "Extracted Latest Specmatic Release Version"
           echo $SPECMATIC_LATEST_RELEASE_VERSION
       - name: Repository Dispatch
