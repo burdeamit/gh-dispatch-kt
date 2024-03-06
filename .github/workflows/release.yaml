@@ -41,7 +41,7 @@ jobs:
           echo "SPECMATIC_LATEST_RELEASE_VERSION=${GITHUB_REF#refs/tags/}"
           echo "SPECMATIC_LATEST_RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           echo "Extracted Latest Specmatic Release Version ${SPECMATIC_LATEST_RELEASE_VERSION}"
-          echo ${{ env.SPECMATIC_LATEST_RELEASE_VERSION }}
+          echo "${{ env.SPECMATIC_LATEST_RELEASE_VERSION }}"
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3
 
@@ -49,7 +49,7 @@ jobs:
           token: ${{ secrets.UPDATE_TOKEN }}
           repository: ${{ matrix.repository }}
           event-type: specmatic-core-release
-          client-payload: '{"latest-release": "$SPECMATIC_LATEST_RELEASE_VERSION"}'
+          client-payload: "{latest-release: '${{ env.SPECMATIC_LATEST_RELEASE_VERSION }}'}"
 
   # check_status:
   #   needs: dispatch
