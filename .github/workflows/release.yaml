@@ -47,7 +47,7 @@ jobs:
           token: ${{ secrets.UPDATE_TOKEN }}
           repository: ${{ matrix.repository }}
           event-type: specmatic-core-release
-          client-payload: "{'latest-release': ${{ env.SPECMATIC_LATEST_RELEASE_VERSION }}}"
+          client-payload: '{"latest-release": "${{ env.SPECMATIC_LATEST_RELEASE_VERSION }}"}'
 
   # check_status:
   #   needs: dispatch
